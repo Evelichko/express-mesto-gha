@@ -1,50 +1,32 @@
 const User = require('../models/users');
 
-console.log('cont 1');
+const {
+  ERROR_INACCURATE_DATA,
+  ERROR_NOT_FOUND,
+  ERROR_INTERNAL_SERVER,
+} = require('../errors/errors');
 
-// module.exports.createUser = (req, res) => {
-//   const { name, about, avatar } = req.body;
-//   User.create({ name, about, avatar })
-//     .then((user) => res.status(201).send({ data: user }))
-//     .catch((err) => res.status(400).send({ message: err }));
-// };
-
-function createUser(req, res, next) {
-  console.log('cont 2');
-
+function createUser(req, res) {
   const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => {
-      const { _id } = user;
-      return res.status(201).send({
-        name,
-        about,
-        avatar,
-        _id,
-      });
-    })
+
+  User
+    .create({ name, about, avatar })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
-      console.log(err);
-      next(err);
-   });
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' })
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' })
+      }
+    }
+    );
 }
-//   .catch((err =>
-//   if(err.status(400).send({message: 'Переданы некорректные данные при создании пользователя'}))
-// } else {
-//   err.status(500).send({message: 'Произошла ошибка'});
-// })
 
 function getAllUsers(req, res) {
   User
     .find({})
-    .then((users) => res.send({ users }))
-    .catch((err) => {
-      console.log(err);
-    });
-  //   if(err.status(400).send({message: 'Переданы некорректные данные при создании пользователя'}))
-  // } else {
-  //   err.status(500).send({message: 'Произошла ошибка'});
-  // })
+    .then((users) => res.send({ data: users }))
+    .catch(() => res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' }));
 }
 
 function getUserInfo(req, res) {
@@ -53,20 +35,83 @@ function getUserInfo(req, res) {
   User
     .findById(id)
     .then((user) => {
-      res.send({ user });
+      if (user) return res.send({ data: user });
+
+      return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с указанным id не найден' });
     })
     .catch((err) => {
-      console.log(err);
+      if (err.name === 'CastError') {
+        res.status(ERROR_INACCURATE_DATA).send({ message: 'Передан некорректный id' })
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' })
+      }
+    }
+    );
+}
+
+function setUserInfo(req, res) {
+  const { name, about } = req.body;
+  const { _id: userId } = req.user;
+
+  User
+    .findByIdAndUpdate(
+      userId,
+      {
+        name,
+        about,
+      },
+      {
+        new: true,
+        runValidators: true,
+        upsert: false,
+      },
+    )
+    .then((user) => {
+      if (user) return res.send({ data: user });
+
+      return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с указанным id не найден' });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        return res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      }
+      return res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' });
     });
 }
-// .catch((err) =>
-//   if(err.status(404).send({message: 'Пользователь по указанному _id не найден'}))
-// } else {
-//   err.status(500).send({message: 'Произошла ошибка'});
-// })
+
+function setUserAvatar(req, res) {
+  const { avatar } = req.body;
+  const { _id: userId } = req.user;
+
+  User
+    .findByIdAndUpdate(
+      userId,
+      {
+        avatar,
+      },
+      {
+        new: true,
+        runValidators: true,
+        upsert: false,
+      },
+    )
+    .then((user) => {
+      if (user) return res.send({ data: user });
+
+      return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с указанным id не найден' });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        return res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при обновлении аватара' });
+      }
+      return res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' });
+    });
+}
 
 module.exports = {
- createUser,
+  createUser,
   getAllUsers,
   getUserInfo,
+  setUserInfo,
+  setUserAvatar,
 };

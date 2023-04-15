@@ -14,21 +14,22 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 .then(() => console.log('Успешное подключение к MongoDB'))
 .catch((err) => console.error('Ошибка подключения:', err));
 
-
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '5d8b8592978f8bd833ca8133'
-//   };
-
-//   next();
-// });
 const app = express();
+
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '643aacdc1a4bc372d5b763b9'
+  };
+
+  next();
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/', routeUsers);
-app.use('/', routeCards);
+app.use('/users', routeUsers);
+app.use('/cards', routeCards);
 
 app.use((req, res, next) => next(console.log('ошибка')));
 
