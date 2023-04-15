@@ -12,9 +12,7 @@ const { PORT = 3000 } = process.env;
 
 mongoose.set('strictQuery', true);
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
-  .then(() => console.log('Успешное подключение к MongoDB'))
-  .catch((err) => console.error('Ошибка подключения:', err));
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 const app = express();
 app.use((req, res, next) => {
@@ -30,7 +28,4 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/users', routeUsers);
 app.use('/cards', routeCards);
-
-app.use((req, res, next) => next(console.log('ошибка')));
-
-app.listen(PORT, () => { console.log('я подключился'); });
+app.listen(PORT);

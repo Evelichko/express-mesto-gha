@@ -29,7 +29,6 @@ const userSchema = new Schema(
     versionKey: false,
   },
 );
-console.log('create schema');
 
 const User = mongoose.model('user', userSchema);
 

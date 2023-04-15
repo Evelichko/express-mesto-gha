@@ -21,12 +21,12 @@ function createCard(req, res) {
     .create({ name, link, owner: userId })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-    res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при создании карточки' })
-  } else {
-    res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' })
-  }
-});
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при создании карточки' });
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' });
+      }
+    });
 }
 
 function likeCard(req, res) {
@@ -73,7 +73,7 @@ function dislikeCard(req, res) {
       },
       {
         new: true,
-ъ      },
+      },
     )
     .then((card) => {
       if (card) return res.send({ data: card });
@@ -100,13 +100,12 @@ function deleteCard(req, res) {
       return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с указанным id не найдена' });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-    res.status(ERROR_INACCURATE_DATA).send({ message: 'Передан некорректный id' })
-  }
-  else {
-    res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' })
-  }
-});
+      if (err.name === 'CastError' || err.name === 'CastError') {
+        res.status(ERROR_INACCURATE_DATA).send({ message: 'Передан некорректный id' });
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' });
+      }
+    });
 }
 
 module.exports = {

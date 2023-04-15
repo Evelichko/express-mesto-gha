@@ -14,12 +14,11 @@ function createUser(req, res) {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' })
+        res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' });
       } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' })
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' });
       }
-    }
-    );
+    });
 }
 
 function getAllUsers(req, res) {
@@ -41,12 +40,11 @@ function getUserInfo(req, res) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_INACCURATE_DATA).send({ message: 'Передан некорректный id' })
+        res.status(ERROR_INACCURATE_DATA).send({ message: 'Передан некорректный id' });
       } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' })
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' });
       }
-    }
-    );
+    });
 }
 
 function setUserInfo(req, res) {
