@@ -8,6 +8,8 @@ const routeUsers = require('./routes/users');
 
 const routeCards = require('./routes/cards');
 
+const { ERROR_NOT_FOUND } = require('./errors/errors');
+
 const { PORT = 3000 } = process.env;
 
 mongoose.set('strictQuery', true);
@@ -25,6 +27,10 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use((req, res) => {
+  res.status(ERROR_NOT_FOUND).send({ message: 'Страницы этому адресу нет' });
+});
 
 app.use('/users', routeUsers);
 app.use('/cards', routeCards);
