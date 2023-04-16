@@ -28,10 +28,11 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  next(res.status(ERROR_NOT_FOUND).send({ message: 'Страницы с таким адреос нет' }));
-});
-
 app.use('/users', routeUsers);
 app.use('/cards', routeCards);
+
+app.use((req, res, next) => {
+  next(res.status(ERROR_NOT_FOUND).send({ message: 'Страницы с таким адресом нет' }));
+});
+
 app.listen(PORT);
