@@ -8,8 +8,10 @@ const cardSchema = new Schema(
     name: {
       type: String,
       required: true,
-      minlength: 2,
-      maxlength: 30,
+      validate: {
+        validator: ({ length }) => length >= 2 && length <= 30,
+        message: 'Имя карточки должно быть длиной от 2 до 30 символов',
+      },
     },
 
     link: {

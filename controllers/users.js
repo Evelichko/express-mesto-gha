@@ -11,7 +11,15 @@ function createUser(req, res) {
 
   User
     .create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      const { _id } = user;
+      return res.status(201).send({
+        name,
+        about,
+        avatar,
+        _id,
+      });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' });
