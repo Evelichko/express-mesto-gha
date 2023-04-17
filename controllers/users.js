@@ -6,23 +6,22 @@ const {
   ERROR_INTERNAL_SERVER,
 } = require('../errors/errors');
 
+const newError = new Error();
+
+newError.statusCode = 404;
+
 function createUser(req, res) {
   const { name, about, avatar } = req.body;
 
   User
     .create({ name, about, avatar })
-    .then((user) => {
-      const { _id } = user;
-      return res.status(201).send({
-        name,
-        about,
-        avatar,
-        _id,
-      });
-    })
+    .orFail(new Error())
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_INACCURATE_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      } else if (err.statusCode === 404) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'Ошибка по умолчанию' });
       }
