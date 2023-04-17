@@ -12,16 +12,10 @@ async function createUser(req, res) {
     const user = await User.create({ name, about, avatar });
     res.send(user);
   } catch (err) {
-    if (err.name === 'CastError') {
-      res.status(400).send({
-        message: 'Неверный формат переданных данных',
-      });
-      return;
-    }
     if (err.name === 'ValidationError') {
-      res.status(400).send({
-        message: err.message,
-      });
+      res.status(400).send({ message: 'Переданы некорректные данные' });
+    } else {
+      res.status(500).send({ message: 'Ошибка по умолчанию' });
     }
   }
 }
@@ -66,7 +60,6 @@ function setUserInfo(req, res) {
       {
         new: true,
         runValidators: true,
-        upsert: false,
       },
     )
     .then((user) => {
@@ -95,7 +88,6 @@ function setUserAvatar(req, res) {
       {
         new: true,
         runValidators: true,
-        upsert: false,
       },
     )
     .then((user) => {
