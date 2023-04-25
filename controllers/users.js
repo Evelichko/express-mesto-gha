@@ -12,13 +12,15 @@ async function createUser(req, res, next) {
       name, about, avatar, email, password,
     } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
-    const user = await User.create({
+    let user = await User.create({
       name,
       about,
       avatar,
       email,
       password: passwordHash,
     });
+    user = user.toObject();
+    delete user.password;
     res.status(201).send(user);
   } catch (err) {
     if (err.name === 'CastError' || err.name === 'ValidationError') {
@@ -118,25 +120,36 @@ function setUserAvatar(req, res, next) {
     });
 }
 
-function login(req, res, next) {
-  const { email, password } = req.body;
+async function login(req, res, next) {
+  try {
+    const { email, password } = req.body;
 
-  User
-    .findUserByCredentials(email, password)
-    .then(({ _id: userId }) => {
-      if (userId) {
-        const token = jwt.sign(
-          { userId },
-          'super-strong-secret',
-          { expiresIn: '7d' },
-        );
+    const user = await User.findOne({ email }).select('+password');
 
-        return res.send({ _id: token });
-      }
+    if (!user) {
+      throw new UnauthorizedError('Неверные данные для входа');
+    }
 
-      throw new UnauthorizedError('Неправильные почта или пароль');
-    })
-    .catch(next);
+    const hasRightPassword = await bcrypt.compare(password, user.password);
+
+    if (!hasRightPassword) {
+      throw new UnauthorizedError('Неверные данные для входа');
+    }
+
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      'secretkey',
+      {
+        expiresIn: '7d',
+      },
+    );
+
+    res.status(200).send({ jwt: token });
+  } catch (err) {
+    next(err);
+  }
 }
 
 function getCurrentUserInfo(req, res, next) {

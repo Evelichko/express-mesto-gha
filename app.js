@@ -1,19 +1,13 @@
 const express = require('express');
-
 const mongoose = require('mongoose');
-
 const { celebrate, Joi } = require('celebrate');
-
 const { errors } = require('celebrate');
-
 const bodyParser = require('body-parser');
 
 const routeUsers = require('./routes/users');
-
 const routeCards = require('./routes/cards');
 
 const { auth } = require('./middlewares/auth');
-
 const { handleError } = require('./middlewares/handleError');
 
 const { PORT = 3000 } = process.env;
@@ -21,11 +15,10 @@ const { PORT = 3000 } = process.env;
 const NotFoundError = require('./errors/NotFoundError');
 
 mongoose.set('strictQuery', true);
-
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
-const { login } = require('./controllers/users');
-const { createUser } = require('./controllers/users');
+const login = require('./controllers/users');
+const createUser = require('./controllers/users');
 
 const app = express();
 
