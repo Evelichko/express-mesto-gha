@@ -8,12 +8,11 @@ const routeCards = require('./routes/cards');
 const routeSignUp = require('./routes/signUp');
 const routeSignIn = require('./routes/signIn');
 
-const { auth } = require('./middlewares/auth');
-const { handleError } = require('./middlewares/handleError');
+const auth = require('./middlewares/auth');
+const handleError = require('./middlewares/handleError');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
-
-const NotFoundError = require('./errors/NotFoundError');
 
 mongoose.set('strictQuery', true);
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');

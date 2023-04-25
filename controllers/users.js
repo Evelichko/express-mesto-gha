@@ -78,7 +78,7 @@ function setUserInfo(req, res, next) {
       },
     )
     .then((user) => {
-      if (user) return res.send({ data: user });
+      if (user) return res.send(user);
 
       throw new NotFoundError('Пользователь с таким id не найден');
     })
@@ -158,7 +158,7 @@ function getCurrentUserInfo(req, res, next) {
   User
     .findById(userId)
     .then((user) => {
-      if (user) return res.status(200).send({ user });
+      if (user) return res.status(200).send({ data: user });
 
       throw new NotFoundError('Данные по указанному id не найдены');
     })
