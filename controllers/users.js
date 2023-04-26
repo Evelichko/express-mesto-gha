@@ -151,21 +151,23 @@ async function login(req, res, next) {
   }
 }
 
-async function getCurrentUserInfo(req, res, next) {
-  try {
-    const userId = req.user._id;
-    const user = await User.findById(userId);
+function getCurrentUserInfo(req, res, next) {
+  const userId = req.user._id;
+  User
+    .findById(userId)
+    .then((user) => {
+      if (user) return res.send({ user });
 
-    if (!user) {
-      throw new NotFoundError('Пользователь не найден');
-    }
-
-    res.send(user);
-  } catch (err) {
-    next(err);
-  }
+      throw new NotFoundError('Пользователь с таким id не найден');
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new InaccurateDataError('Передан некорректный id'));
+      } else {
+        next(err);
+      }
+    });
 }
-
 
 module.exports = {
   createUser,
