@@ -1,12 +1,9 @@
-const handleError = (err, req, res) => {
-  const { statusCode = 500 } = err;
-  let { message } = err;
+const handleError = (err, _, res, next) => {
+  const statusCode = err.statusCode || 500;
 
-  if (statusCode === 500) {
-    message = 'Ошибка на сервере';
-  }
-
+  const message = statusCode === 500 ? 'На сервере произошла ошибка' : err.message;
   res.status(statusCode).send({ message });
+  next();
 };
 
 module.exports = handleError;

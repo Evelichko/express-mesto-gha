@@ -23,13 +23,15 @@ async function createUser(req, res, next) {
     delete user.password;
     res.status(201).send(user);
   } catch (err) {
+    console.log('lalal');
     if (err.name === 'CastError' || err.name === 'ValidationError') {
+      console.log('lalal1');
       next(new InaccurateDataError('Неверные данные в запросе'));
       return;
     }
     if (err.code === 11000) {
+      console.log('lalal1');
       next(new ConflictError('Пользователь с таким email уже существует'));
-      return;
     }
     next(err);
   }
