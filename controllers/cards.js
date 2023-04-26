@@ -83,27 +83,25 @@ function dislikeCard(req, res, next) {
     });
 }
 
-async function deleteCard(req, res, next) {
-  try {
-    const card = await Card.findById(req.params.cardId).populate('owner');
+function deleteCard(req, res, next) {
+  const { userId } = req.user;
 
-    if (!card) {
-      throw new NotFoundError('Карточка не найдена');
-    }
+  Card
+    .findById(
+      req.params.cardId,
+    )
+    .then((card) => {
+      if (!card) throw new NotFoundError('Данные по указанному id не найдены');
 
-    const ownerId = card.owner._id;
-    const userId = req.user._id;
+      const { owner: cardOwnerId } = card;
+      if (cardOwnerId.valueOf() !== userId) throw new ForbiddenError('Нет прав доступа');
 
-    if (ownerId !== userId) {
-      throw new ForbiddenError('Нельзя удалить чужую карточку');
-    }
-
-    await Card.findByIdAndRemove(req.params.cardId);
-
-    res.send(card);
-  } catch (err) {
-    next(err);
-  }
+      card
+        .remove()
+        .then(() => res.send({ data: card }))
+        .catch(next);
+    })
+    .catch(next);
 }
 
 module.exports = {
