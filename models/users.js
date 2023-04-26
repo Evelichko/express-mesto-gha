@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 const { Schema } = mongoose;
 
@@ -42,31 +42,27 @@ const userSchema = new Schema(
       type: String,
       required: true,
       select: false,
-      validate: {
-        validator: ({ length }) => length >= 6,
-        message: 'Пароль должен состоять минимум из 6 символов',
-      },
     },
   },
   {
     versionKey: false,
-    statics: {
-      findUserByCredentials(email, password) {
-        return this
-          .findOne({ email })
-          .select('+password')
-          .then((user) => {
-            if (user) {
-              return bcrypt.compare(password, user.password)
-                .then((matched) => {
-                  if (matched) return user;
-                  return Promise.reject();
-                });
-            }
-            return Promise.reject();
-          });
-      },
-    },
+    // statics: {
+    //   findUserByCredentials(email, password) {
+    //     return this
+    //       .findOne({ email })
+    //       .select('+password')
+    //       .then((user) => {
+    //         if (user) {
+    //           return bcrypt.compare(password, user.password)
+    //             .then((matched) => {
+    //               if (matched) return user;
+    //               return Promise.reject();
+    //             });
+    //         }
+    //         return Promise.reject();
+    //       });
+    //   },
+    // },
   },
 );
 
