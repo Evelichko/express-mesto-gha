@@ -49,11 +49,11 @@ function getUserInfo(req, res, next) {
   User
     .findById(id)
     .then((user) => {
-      if (user) return res.send({ data: user });
+      if (user) return res.send(user);
       throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new InaccurateDataError('Передан некорректный id'));
       } else {
         next(err);
