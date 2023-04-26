@@ -23,14 +23,11 @@ async function createUser(req, res, next) {
     delete user.password;
     res.status(201).send(user);
   } catch (err) {
-    console.log('lalal');
     if (err.name === 'CastError' || err.name === 'ValidationError') {
-      console.log('lalal1');
       next(new InaccurateDataError('Неверные данные в запросе'));
       return;
     }
     if (err.code === 11000) {
-      console.log('lalal1');
       next(new ConflictError('Пользователь с таким email уже существует'));
     }
     next(err);
@@ -51,7 +48,7 @@ function getUserInfo(req, res, next) {
   User
     .findById(id)
     .then((user) => {
-      if (user) return res.send(user);
+      if (user) return res.status(200).send(user);
       throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {

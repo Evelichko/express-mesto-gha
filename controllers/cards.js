@@ -6,17 +6,17 @@ const InaccurateDataError = require('../errors/InaccurateDataError');
 function getCards(req, res, next) {
   Card
     .find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.send({ cards }))
     .catch(next);
 }
 
 function createCard(req, res, next) {
   const { name, link } = req.body;
-  const { userId } = req.user;
-
+  const ownerId = req.user._id;
   Card
-    .create({ name, link, owner: userId })
-    .then((card) => res.status(201).send(card))
+    .create({ name, link, ownerId })
+    .then((card) => res.status(200).send({ card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new InaccurateDataError('Переданы некорректные данные при создании карточки'));
