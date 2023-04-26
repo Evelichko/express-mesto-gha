@@ -84,17 +84,16 @@ function dislikeCard(req, res, next) {
 }
 
 function deleteCard(req, res, next) {
-  const { cardId } = req.params;
-  const { userId } = req.user;
+  const userId = req.user._id;
 
   Card
-    .findById({ cardId })
+    .findById(req.params.cardId)
     .populate('owner')
     .then((card) => {
       if (!card) throw new NotFoundError('Данные по указанному id не найдены');
 
-      const { owner: cardOwnerId } = card;
-      if (cardOwnerId.valueOf() !== userId) throw new ForbiddenError('Нет прав доступа');
+      const ownerId = card.owner.id;
+      if (ownerId.valueOf() !== userId) throw new ForbiddenError('Нет прав доступа');
 
       card
         .remove()

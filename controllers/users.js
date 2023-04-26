@@ -152,11 +152,10 @@ async function login(req, res, next) {
 }
 
 function getCurrentUserInfo(req, res, next) {
-  const userId = req.user._id;
   User
-    .findById(userId)
+    .findById(req.user._id)
     .then((user) => {
-      if (user) return res.send({ user });
+      if (user) return res.send(user);
 
       throw new NotFoundError('Пользователь с таким id не найден');
     })
