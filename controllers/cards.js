@@ -13,10 +13,10 @@ function getCards(req, res, next) {
 
 function createCard(req, res, next) {
   const { name, link } = req.body;
-  const ownerId = req.user._id;
+  const { userId } = req.user;
   Card
-    .create({ name, link, ownerId })
-    .then((card) => res.status(200).send({ card }))
+    .create({ name, link, owner: userId })
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new InaccurateDataError('Переданы некорректные данные при создании карточки'));
@@ -86,13 +86,12 @@ function dislikeCard(req, res, next) {
 }
 
 function deleteCard(req, res, next) {
-  const { id: cardId } = req.params;
+  const { cardId } = req.params;
   const { userId } = req.user;
 
   Card
-    .findById({
-      _id: cardId,
-    })
+    .findById({ cardId })
+    .populate('owner')
     .then((card) => {
       if (!card) throw new NotFoundError('Данные по указанному id не найдены');
 

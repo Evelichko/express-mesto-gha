@@ -24,16 +24,21 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/', routeSignUp);
 app.use('/', routeSignIn);
-
+console.log('1');
 app.use(auth);
+console.log('2');
 
 app.use('/users', routeUsers);
 app.use('/cards', routeCards);
+console.log('3');
 
 app.use((req, res, next) => next(new NotFoundError('Страницы с таким адресом нет')));
+console.log('4');
 
 app.use(errors());
+console.log('5');
 
 app.use(handleError);
+console.log('6');
 
 app.listen(PORT);

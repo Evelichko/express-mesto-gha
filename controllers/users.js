@@ -157,11 +157,17 @@ function getCurrentUserInfo(req, res, next) {
   User
     .findById(userId)
     .then((user) => {
-      if (user) return res.status(200).send({ data: user });
+      if (user) return res.status(200).send({ user });
 
       throw new NotFoundError('Данные по указанному id не найдены');
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new InaccurateDataError('Передан некорректный id'));
+      } else {
+        next(err);
+      }
+    });
 }
 
 module.exports = {
