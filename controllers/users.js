@@ -152,10 +152,9 @@ async function login(req, res, next) {
 }
 
 function getCurrentUserInfo(req, res, next) {
-  const { _id } = req.user;
-
+  const id = req.user._id;
   User
-    .findById(_id)
+    .findById({id})
     .then((user) => {
       if (user) return res.status(200).send(user);
 
