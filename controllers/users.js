@@ -119,42 +119,31 @@ function setUserAvatar(req, res, next) {
     });
 }
 
-async function login(req, res, next) {
-  try {
-    const { email, password } = req.body;
+function login(req, res, next) {
+  const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select('+password');
+  User
+    .findUserByCredentials(email, password)
+    .then(({ _id: userId }) => {
+      if (userId) {
+        const token = jwt.sign(
+          { userId },
+          'secretKey',
+          { expiresIn: '7d' },
+        );
 
-    if (!user) {
-      throw new UnauthorizedError('Неверные данные для входа');
-    }
+        return res.send({ jwt: token });
+      }
 
-    const hasRightPassword = await bcrypt.compare(password, user.password);
-
-    if (!hasRightPassword) {
-      throw new UnauthorizedError('Неверные данные для входа');
-    }
-
-    const token = jwt.sign(
-      {
-        _id: user._id,
-      },
-      'secretkey',
-      {
-        expiresIn: '7d',
-      },
-    );
-
-    res.status(200).send({ jwt: token });
-  } catch (err) {
-    next(err);
-  }
+      throw new UnauthorizedError('Неправильные почта или пароль');
+    })
+    .catch(next);
 }
 
 function getCurrentUserInfo(req, res, next) {
   const id = req.user._id;
   User
-    .findById({id})
+    .findById(id)
     .then((user) => {
       if (user) return res.status(200).send(user);
 
