@@ -180,9 +180,9 @@ async function login(req, res, next) {
 }
 
 function getCurrentUserInfo(req, res, next) {
-  const { userId } = req.user;
+  const { _id } = req.user;
   User
-    .findById(userId)
+    .findById(_id)
     .then((user) => {
       if (user) return res.status(200).send(user);
       throw new NotFoundError('Пользователь с таким id не найден');
