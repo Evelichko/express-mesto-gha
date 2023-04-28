@@ -105,29 +105,24 @@ function dislikeCard(req, res, next) {
 //     })
 //     .catch(next);
 
-async function deleteCard(req, res, next) {
-  try {
-    const { cardId } = req.params;
+function deleteCard(req, res, next) {
+  const idCard = req.params.cardId;
+  const userId = req.user._id;
 
-    const card = await Card.findById(cardId).populate('owner');
+  Card
+    .findById(idCard)
+    .then((card) => {
+      if (!card) throw new NotFoundError('Данные по указанному id не найдены');
 
-    if (!card) {
-      throw new NotFoundError('Карточка не найдена');
-    }
+      const { owner: cardOwnerId } = card;
+      if (cardOwnerId.valueOf() !== userId) throw new ForbiddenError('Нет прав доступа');
 
-    const ownerId = card.owner._id;
-    const userId = req.user._id;
-
-    if (ownerId !== userId) {
-      throw new ForbiddenError('Нельзя удалить чужую карточку');
-    }
-
-    await Card.findByIdAndRemove(cardId);
-
-    res.send(card);
-  } catch (err) {
-    next(err);
-  }
+      card
+        .remove()
+        .then(() => res.send({ data: card }))
+        .catch(next);
+    })
+    .catch(next);
 }
 
 module.exports = {
