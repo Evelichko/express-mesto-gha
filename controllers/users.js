@@ -71,11 +71,12 @@ function getUserInfo(req, res, next) {
 
 function setUserInfo(req, res, next) {
   const { name, about } = req.body;
-  const { _id: userId } = req.user;
+  // const { _id: userId } = req.user;
+  const _id = req.user;
 
   User
     .findByIdAndUpdate(
-      userId,
+      _id,
       {
         name,
         about,
