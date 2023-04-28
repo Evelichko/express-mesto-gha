@@ -93,11 +93,15 @@ function deleteCard(req, res, next) {
       const cardOwnerId = card.owner._id;
 
       if (cardOwnerId.toString() !== userId) throw new ForbiddenError('Нет прав доступа');
-
-      card
-        .remove()
-        .then(() => res.send({ data: card }))
-        .catch(next);
+      console.log('карточка' + req.params.id);
+      console.log('user' + userId);
+      console.log('owberID' + cardOwnerId.toString());
+      // card
+      //   .remove()
+      //   .then(() => res.send({ data: card }))
+      //   .catch(next);
+      Card.findByIdAndRemove(req.params.id);
+      res.send(card);
     })
     .catch(next);
 }
