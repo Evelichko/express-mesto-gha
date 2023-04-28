@@ -163,7 +163,6 @@ async function login(req, res, next) {
     if (!hasRightPassword) {
       throw new UnauthorizedError('Неверные данные для входа');
     }
-
     const token = jwt.sign(
       {
         _id: user._id,
@@ -181,12 +180,11 @@ async function login(req, res, next) {
 }
 
 function getCurrentUserInfo(req, res, next) {
-  const { _id } = req.user;
+  const { userId } = req.user;
   User
-    .findById({ _id })
+    .findById(userId)
     .then((user) => {
       if (user) return res.status(200).send(user);
-
       throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
