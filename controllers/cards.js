@@ -106,11 +106,11 @@ function dislikeCard(req, res, next) {
 //     .catch(next);
 
 function deleteCard(req, res, next) {
-  const idCard = req.params.cardId;
+  const { id: cardId } = req.params;
   const userId = req.user._id;
 
   Card
-    .findById(idCard)
+    .findById(cardId)
     .then((card) => {
       if (!card) throw new NotFoundError('Данные по указанному id не найдены');
 

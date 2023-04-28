@@ -20,7 +20,7 @@ router.post('/', celebrate({
 
 router.get('/', getCards);
 
-router.delete('/:cardId', celebrate({
+router.delete('/:id', celebrate({
   params: Joi.object().keys({
     id: Joi.string().length(24).hex().required(),
   }),
