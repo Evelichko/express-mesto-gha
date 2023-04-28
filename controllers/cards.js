@@ -115,7 +115,7 @@ async function deleteCard(req, res, next) {
       throw new NotFoundError('Карточка не найдена');
     }
 
-    const ownerId = card.owner.id;
+    const ownerId = card.owner._id;
     const userId = req.user._id;
 
     if (ownerId !== userId) {
