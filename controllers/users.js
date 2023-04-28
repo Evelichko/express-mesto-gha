@@ -128,26 +128,6 @@ function setUserAvatar(req, res, next) {
     });
 }
 
-// function login(req, res, next) {
-//   const { email, password } = req.body;
-//   User
-//     .findUserByCredentials(email, password)
-//     .then(({ _id: userId }) => {
-//       if (userId) {
-//         const token = jwt.sign(
-//           { userId },
-//           'secretKey',
-//           { expiresIn: '7d' },
-//         );
-
-//         return res.send({ jwt: token });
-//       }
-
-//       throw new UnauthorizedError('Неправильные почта или пароль');
-//     })
-//     .catch(next);
-// }
-
 async function login(req, res, next) {
   try {
     const { email, password } = req.body;
