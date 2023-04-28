@@ -13,7 +13,7 @@ function getCards(req, res, next) {
 
 function createCard(req, res, next) {
   const { name, link } = req.body;
-  const { userId } = req.user;
+  const userId = req.user._id;
 
   Card
     .create({ name, link, owner: userId })
