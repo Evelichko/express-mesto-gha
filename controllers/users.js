@@ -44,6 +44,23 @@ function createUser(req, res, next) {
     });
 }
 
+function getCurrentUserInfo(req, res, next) {
+  const id = req.user._id;
+  User
+    .findById(id)
+    .then((user) => {
+      if (user) return res.status(200).send(user);
+      throw new NotFoundError('Пользователь с таким id не найден');
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new InaccurateDataError('Передан некорректный id'));
+      } else {
+        next(err);
+      }
+    });
+}
+
 function getAllUsers(req, res, next) {
   User
     .find({})
@@ -160,22 +177,22 @@ async function login(req, res, next) {
   }
 }
 
-function getCurrentUserInfo(req, res, next) {
-  const _id = req.user;
-  User
-    .findById(_id)
-    .then((user) => {
-      if (user) return res.status(200).send(user);
-      throw new NotFoundError('Пользователь с таким id не найден');
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new InaccurateDataError('Передан некорректный id'));
-      } else {
-        next(err);
-      }
-    });
-}
+// function getCurrentUserInfo(req, res, next) {
+//   const _id = req.user;
+//   User
+//     .findById(_id)
+//     .then((user) => {
+//       if (user) return res.status(200).send(user);
+//       throw new NotFoundError('Пользователь с таким id не найден');
+//     })
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         next(new InaccurateDataError('Передан некорректный id'));
+//       } else {
+//         next(err);
+//       }
+//     });
+// }
 
 module.exports = {
   createUser,
