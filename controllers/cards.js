@@ -13,10 +13,11 @@ function getCards(req, res, next) {
 
 function createCard(req, res, next) {
   const { name, link } = req.body;
-  const userId = req.user._id;
+  const { userId } = req.user;
+
   Card
     .create({ name, link, owner: userId })
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new InaccurateDataError('Переданы некорректные данные при создании карточки'));
@@ -84,25 +85,50 @@ function dislikeCard(req, res, next) {
 }
 
 function deleteCard(req, res, next) {
-  const id = req.user._id;
+  const { id: cardId } = req.params;
+  const { userId } = req.user;
 
   Card
-    .findById(
-      req.params.cardId,
-    )
+    .findById({
+      _id: cardId,
+    })
     .then((card) => {
       if (!card) throw new NotFoundError('Данные по указанному id не найдены');
 
       const { owner: cardOwnerId } = card;
-      if (cardOwnerId.valueOf() !== id) throw new ForbiddenError('Нет прав доступа');
+      if (cardOwnerId.valueOf() !== userId) throw new ForbiddenError('Нет прав доступа');
 
       card
         .remove()
-        .then(() => res.send(card))
+        .then(() => res.send({ data: card }))
         .catch(next);
     })
     .catch(next);
 }
+// async function deleteCard(req, res, next) {
+//   try {
+//     const { cardId } = req.params;
+
+//     const card = await Card.findById(cardId).populate('owner');
+
+//     if (!card) {
+//       throw new NotFoundError('Карточка не найдена');
+//     }
+
+//     const { ownerId } = card.owner._id;
+//     const { userId } = req.user._id;
+
+//     if (ownerId !== userId) {
+//       throw new ForbiddenError('Нельзя удалить чужую карточку');
+//     }
+
+//     await Card.findByIdAndRemove(cardId);
+
+//     res.send(card);
+//   } catch (err) {
+//     next(err);
+//   }
+// }
 
 module.exports = {
   getCards,
