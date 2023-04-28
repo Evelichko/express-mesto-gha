@@ -96,15 +96,18 @@ function deleteCard(req, res, next) {
       console.log('карточка' + req.params.id);
       console.log('user' + userId);
       console.log('owberID' + cardOwnerId.toString());
+      console.log(card._id.toString());
       // card
       //   .remove()
       //   .then(() => res.send({ data: card }))
       //   .catch(next);
-      Card.findByIdAndRemove(req.params.id);
+      Card.findByIdAndRemove(card._id.toString());
       res.send(card);
     })
     .catch(next);
 }
+
+
 
 module.exports = {
   getCards,
