@@ -52,13 +52,7 @@ function getCurrentUserInfo(req, res, next) {
       if (user) return res.status(200).send(user);
       throw new NotFoundError('Пользователь с таким id не найден');
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new InaccurateDataError('Передан некорректный id'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 }
 
 function getAllUsers(req, res, next) {
@@ -78,7 +72,7 @@ function getUserInfo(req, res, next) {
       throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         next(new InaccurateDataError('Передан некорректный id'));
       } else {
         next(err);
@@ -109,7 +103,7 @@ function setUserInfo(req, res, next) {
       throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new InaccurateDataError('Переданы некорректные данные при обновлении профиля пользователя'));
       } else {
         next(err);
@@ -138,7 +132,7 @@ function setUserAvatar(req, res, next) {
       throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new InaccurateDataError('Переданы некорректные данные при обновлении профиля пользователя'));
       } else {
         next(err);
