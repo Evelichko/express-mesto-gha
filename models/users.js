@@ -11,6 +11,7 @@ const userSchema = new Schema(
       default: 'Жак-Ив Кусто',
       minlength: 2,
       maxlength: 30,
+      required: true,
     },
 
     about: {
@@ -25,10 +26,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
       default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-      validate: {
-        validator: (avatar) => /.+@.+\..+/.test(avatar),
-        message: 'Требуется ввести электронный адрес',
-      },
+      // validate: {
+      //   validator: (avatar) => /.+@.+\..+/.test(avatar),
+      //   message: 'Введите ссылку на аватар',
+      // },
+      validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
     },
     email: {
       type: String,
@@ -36,7 +38,7 @@ const userSchema = new Schema(
       unique: true,
       validate: {
         validator: (email) => /.+@.+\..+/.test(email),
-        message: 'Требуется ввести электронный адрес',
+        message: 'Введите электронный адрес',
       },
     },
     password: {
