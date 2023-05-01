@@ -72,7 +72,7 @@ function getUserInfo(req, res, next) {
       throw new NotFoundError('Пользователь с таким id не найден');
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         next(new InaccurateDataError('Передан некорректный id'));
       } else {
         next(err);
