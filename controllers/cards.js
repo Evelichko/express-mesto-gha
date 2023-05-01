@@ -46,7 +46,7 @@ function likeCard(req, res, next) {
       throw new NotFoundError('Карточка с указанным id не найдена');
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new InaccurateDataError('Переданы некорректные данные при добавлении лайка карточке'));
       } else {
         next(err);
@@ -75,7 +75,7 @@ function dislikeCard(req, res, next) {
       throw new NotFoundError('Данные по указанному id не найдены');
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new InaccurateDataError('Переданы некорректные данные при снятии лайка карточки'));
       } else {
         next(err);
@@ -95,8 +95,8 @@ function deleteCard(req, res, next) {
       const id = card._id.toString();
       Card
         .findByIdAndRemove(id)
-        .then(() => res.send({ data: card }));
-      // .catch(next);
+        .then(() => res.send({ data: card }))
+        .catch(next);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

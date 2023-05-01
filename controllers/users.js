@@ -7,8 +7,6 @@ const ConflictError = require('../errors/ConflictError');
 const InaccurateDataError = require('../errors/InaccurateDataError');
 
 function createUser(req, res, next) {
-  console.log('lalla');
-
   const {
     email,
     password,
@@ -16,7 +14,6 @@ function createUser(req, res, next) {
     about,
     avatar,
   } = req.body;
-  console.log('lalla2');
 
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
@@ -28,7 +25,6 @@ function createUser(req, res, next) {
     }))
     .then((user) => {
       const { _id } = user;
-      console.log('lalla3');
       return res.status(201).send({
         email,
         name,
@@ -56,13 +52,7 @@ function getCurrentUserInfo(req, res, next) {
       if (user) return res.status(200).send(user);
       throw new NotFoundError('Пользователь с таким id не найден');
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new InaccurateDataError('Передан некорректный id'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 }
 
 function getAllUsers(req, res, next) {
