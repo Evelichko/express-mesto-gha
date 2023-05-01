@@ -15,10 +15,7 @@ const cardSchema = new Schema(
     link: {
       type: String,
       required: true,
-      validate: {
-        validator: (link) => /.+@.+\..+/.test(link),
-        message: 'Требуется ввести электронный адрес',
-      },
+      validate: /https?:\/\/(www)?[0-9a-z\-._~:/?#[\]@!$&'()*+,;=]+#?$/i,
     },
 
     owner: {
