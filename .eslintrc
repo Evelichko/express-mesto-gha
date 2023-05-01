@@ -1,6 +1,5 @@
 {
   "env": {
-    "commonjs": true,
     "es2021": true,
     "node": true
   },
@@ -17,7 +16,6 @@
     ]
   ,
 "eol-last": 0,
-//"no-multipal-empty-lines": ["error", { "max": 1, "maxEOF": 0}],
 "linebreak-style":0
 }
 }
